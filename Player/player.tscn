@@ -1,8 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://bj4to3djixa8o"]
+[gd_scene load_steps=14 format=3 uid="uid://bj4to3djixa8o"]
 
 [ext_resource type="Script" path="res://Player/player.gd" id="1_d08ue"]
 [ext_resource type="Script" path="res://Player/smooth_camera.gd" id="2_gci7j"]
 [ext_resource type="Script" path="res://Player/crosshair.gd" id="3_688ks"]
+[ext_resource type="PackedScene" uid="uid://cqitoxns84mfd" path="res://Weapons/Rifle.tscn" id="3_hcfmv"]
+[ext_resource type="Script" path="res://Player/weapon_handler.gd" id="3_igd7t"]
 [ext_resource type="PackedScene" uid="uid://bty4oddeaqnl3" path="res://Weapons/smg.tscn" id="3_v780i"]
 [ext_resource type="Texture2D" uid="uid://eyqv7qx8o8hy" path="res://Player/damage.png" id="5_flmf4"]
 [ext_resource type="PackedScene" uid="uid://c7c7mobuy16oq" path="res://Player/game_over_menu.tscn" id="6_raa8b"]
@@ -10,6 +12,33 @@
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_q1pi4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cdpqq"]
+
+[sub_resource type="Animation" id="Animation_mr865"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_3rk2w"]
 resource_name = "TakeDamage"
@@ -39,33 +68,6 @@ tracks/1/keys = {
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_mr865"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_eiuoj"]
 _data = {
 "RESET": SubResource("Animation_mr865"),
@@ -90,8 +92,6 @@ top_level = true
 cull_mask = 1048573
 script = ExtResource("2_gci7j")
 
-[node name="SMG" parent="CameraPivot/SmoothCamera" instance=ExtResource("3_v780i")]
-
 [node name="RemoteTransform3D" type="RemoteTransform3D" parent="CameraPivot/SmoothCamera"]
 remote_path = NodePath("../../../SubViewportContainer/SubViewport/WeaponCamera")
 
@@ -114,12 +114,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 cull_mask = 2
 fov = 40.0
 
+[node name="WeaponHandler" type="Node3D" parent="SubViewportContainer/SubViewport/WeaponCamera" node_paths=PackedStringArray("weapon_1", "weapon_2")]
+script = ExtResource("3_igd7t")
+weapon_1 = NodePath("Rifle")
+weapon_2 = NodePath("SMG")
+
+[node name="Rifle" parent="SubViewportContainer/SubViewport/WeaponCamera/WeaponHandler" instance=ExtResource("3_hcfmv")]
+
+[node name="SMG" parent="SubViewportContainer/SubViewport/WeaponCamera/WeaponHandler" instance=ExtResource("3_v780i")]
+
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="Crosshair" type="Control" parent="CenterContainer"]
 layout_mode = 2
@@ -133,6 +143,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(576, 324)
+mouse_filter = 2
 texture = ExtResource("5_flmf4")
 
 [node name="DamageAnimationPlayer" type="AnimationPlayer" parent="DamageTexture"]

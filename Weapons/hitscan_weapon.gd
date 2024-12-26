@@ -6,6 +6,7 @@ extends Node3D
 @export var weapon_damage := 15
 @export var muzzle_flash: GPUParticles3D
 @export var sparks: PackedScene
+@export var automatic: bool
 
 
 @onready var cooldown_timer: Timer = $CooldownTimer
@@ -15,9 +16,14 @@ extends Node3D
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if Input.is_action_pressed("fire"):
-		if cooldown_timer.is_stopped():
-			shoot()
+	if automatic:
+		if Input.is_action_pressed("fire"):
+			if cooldown_timer.is_stopped():
+				shoot()
+	else:
+		if Input.is_action_just_pressed("fire"):
+			if cooldown_timer.is_stopped():
+				shoot()
 		
 	weapon_mesh.position = weapon_mesh.position.lerp(weapon_position, delta * 10.0)
 	
