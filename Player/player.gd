@@ -5,11 +5,26 @@ const SPEED = 5.0
 
 @export var jump_height: float = 1.0
 @export var fall_multiplier: float = 2.5
+@export var max_hitpoints := 100
+	
+
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var mouse_motion := Vector2.ZERO
 
+var hitpoints := max_hitpoints:
+	set(value):
+		if value < hitpoints:
+			damage_animation_player.stop(false)
+			damage_animation_player.play("TakeDamage")
+		hitpoints = value
+		print(hitpoints)
+		if hitpoints <= 0:
+			game_over_menu.game_over()
+
 @onready var camera_pivot: Node3D = $CameraPivot
+@onready var damage_animation_player: AnimationPlayer = $DamageTexture/DamageAnimationPlayer
+@onready var game_over_menu: Control = $GameOverMenu
 
 
 
