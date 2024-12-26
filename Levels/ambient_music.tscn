@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dd34o3r748ndn"]
+
+[ext_resource type="AudioStream" uid="uid://cfo5ricsyjdcd" path="res://Assets/Audio/music.mp3" id="1_yaepu"]
+
+[node name="AmbientMusic" type="AudioStreamPlayer"]
+stream = ExtResource("1_yaepu")
+volume_db = -30.254
+pitch_scale = 0.7
+autoplay = true

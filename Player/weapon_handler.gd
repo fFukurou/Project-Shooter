@@ -42,3 +42,5 @@ func get_current_index() -> int:
 			return index
 	return 0
 		
+func get_weapon_ammo() -> AmmoHandler.ammo_type:
+	return get_child(get_current_index()).ammo_type

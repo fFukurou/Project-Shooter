@@ -15,6 +15,10 @@ run/main_scene="res://Levels/main_level.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+AmbientMusic="res://Levels/ambient_music.tscn"
+
 [global_group]
 
 Player=""
@@ -80,3 +84,7 @@ aim={
 [layer_names]
 
 3d_render/layer_11="Layer 11"
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=2
