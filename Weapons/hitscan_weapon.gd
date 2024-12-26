@@ -7,6 +7,8 @@ extends Node3D
 @export var muzzle_flash: GPUParticles3D
 @export var sparks: PackedScene
 @export var automatic: bool
+@export var ammo_handler: AmmoHandler
+@export var ammo_type: AmmoHandler.ammo_type
 
 
 @onready var cooldown_timer: Timer = $CooldownTimer
@@ -31,16 +33,19 @@ func _process(delta: float) -> void:
 
 
 func shoot() -> void:
-	muzzle_flash.restart()
-	cooldown_timer.start(1.0 / fire_rate)
-	var collider = ray_cast_3d.get_collider()
-	printt("weapon fired!", collider)
-	weapon_mesh.position.z += recoil
-	
-	if collider is Enemy:
-		collider.hitpoints -= weapon_damage
+	if ammo_handler.has_ammo(ammo_type):
+		ammo_handler.use_ammo(ammo_type)
 		
-	var spark = sparks.instantiate()
-	add_child(spark)
-	spark.global_position = ray_cast_3d.get_collision_point()
-	
+		muzzle_flash.restart()
+		cooldown_timer.start(1.0 / fire_rate)
+		var collider = ray_cast_3d.get_collider()
+		printt("weapon fired!", collider)
+		weapon_mesh.position.z += recoil
+		
+		if collider is Enemy:
+			collider.hitpoints -= weapon_damage
+			
+		var spark = sparks.instantiate()
+		add_child(spark)
+		spark.global_position = ray_cast_3d.get_collision_point()
+		

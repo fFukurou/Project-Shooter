@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bj4to3djixa8o"]
+[gd_scene load_steps=17 format=3 uid="uid://bj4to3djixa8o"]
 
 [ext_resource type="Script" path="res://Player/player.gd" id="1_d08ue"]
 [ext_resource type="Script" path="res://Player/smooth_camera.gd" id="2_gci7j"]
@@ -7,7 +7,9 @@
 [ext_resource type="Script" path="res://Player/weapon_handler.gd" id="3_igd7t"]
 [ext_resource type="PackedScene" uid="uid://bty4oddeaqnl3" path="res://Weapons/smg.tscn" id="3_v780i"]
 [ext_resource type="Texture2D" uid="uid://eyqv7qx8o8hy" path="res://Player/damage.png" id="5_flmf4"]
+[ext_resource type="Script" path="res://Player/ammo_handler.gd" id="6_ns1kq"]
 [ext_resource type="PackedScene" uid="uid://c7c7mobuy16oq" path="res://Player/game_over_menu.tscn" id="6_raa8b"]
+[ext_resource type="FontFile" uid="uid://bhqtdf2qt6n7l" path="res://Assets/Fonts/Staatliches/Staatliches-Regular.ttf" id="9_xyl5s"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_q1pi4"]
 
@@ -74,6 +76,10 @@ _data = {
 "TakeDamage": SubResource("Animation_3rk2w")
 }
 
+[sub_resource type="LabelSettings" id="LabelSettings_iwxpm"]
+font = ExtResource("9_xyl5s")
+font_size = 64
+
 [node name="Player" type="CharacterBody3D" groups=["Player"]]
 script = ExtResource("1_d08ue")
 
@@ -87,6 +93,7 @@ shape = SubResource("CapsuleShape3D_cdpqq")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 
 [node name="SmoothCamera" type="Camera3D" parent="CameraPivot"]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 top_level = true
 cull_mask = 1048573
@@ -110,6 +117,7 @@ size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
 [node name="WeaponCamera" type="Camera3D" parent="SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 cull_mask = 2
 fov = 40.0
@@ -119,9 +127,17 @@ script = ExtResource("3_igd7t")
 weapon_1 = NodePath("Rifle")
 weapon_2 = NodePath("SMG")
 
-[node name="Rifle" parent="SubViewportContainer/SubViewport/WeaponCamera/WeaponHandler" instance=ExtResource("3_hcfmv")]
+[node name="Rifle" parent="SubViewportContainer/SubViewport/WeaponCamera/WeaponHandler" node_paths=PackedStringArray("ammo_handler") instance=ExtResource("3_hcfmv")]
+ammo_handler = NodePath("../../AmmoHandler")
 
-[node name="SMG" parent="SubViewportContainer/SubViewport/WeaponCamera/WeaponHandler" instance=ExtResource("3_v780i")]
+[node name="SMG" parent="SubViewportContainer/SubViewport/WeaponCamera/WeaponHandler" node_paths=PackedStringArray("ammo_handler") instance=ExtResource("3_v780i")]
+ammo_handler = NodePath("../../AmmoHandler")
+ammo_type = 1
+
+[node name="AmmoHandler" type="Node" parent="SubViewportContainer/SubViewport/WeaponCamera" node_paths=PackedStringArray("ammo_label")]
+unique_name_in_owner = true
+script = ExtResource("6_ns1kq")
+ammo_label = NodePath("../../../../MarginContainer/AmmoLabel")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchors_preset = 15
@@ -151,6 +167,25 @@ libraries = {
 "": SubResource("AnimationLibrary_eiuoj")
 }
 autoplay = "RESET"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="AmmoLabel" type="Label" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "999"
+label_settings = SubResource("LabelSettings_iwxpm")
 
 [node name="GameOverMenu" parent="." instance=ExtResource("6_raa8b")]
 visible = false
